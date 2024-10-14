@@ -26,7 +26,9 @@ public:
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = 0))
 	float NoiseScale = 1.0f;
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = 0))
-	float Mountain_Thresh = 0.6f;
+	float Mountain_Thresh = 0.3f;
+	UPROPERTY(EditAnywhere, Meta = (ClampMin = -1))
+	float River_Thresh = -0.3f;
 
 
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = 0.000001))

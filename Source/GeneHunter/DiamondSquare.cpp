@@ -47,13 +47,31 @@ void ADiamondSquare::Tick(float DeltaTime)
 
 float ADiamondSquare::get_height(int x, int y)
 {
-	float Z = FMath::PerlinNoise2D(FVector2D(x * NoiseScale + 0.1, y * NoiseScale + 0.1)) * ZMultiplier;
-	Z += FMath::PerlinNoise2D(FVector2D(x * NoiseScale * 3 + 0.1, y * NoiseScale * 3 + 0.1)) * ZMultiplier * 0.2;
-	float Mountain_variable = FMath::PerlinNoise2D(FVector2D(x * NoiseScale * 0.5, y * NoiseScale * 0.5));
-	if (Mountain_variable > Mountain_Thresh)
+	float rocky_noise = FMath::PerlinNoise2D(FVector2D(x * NoiseScale * 10 + 0.1, y * NoiseScale * 10 + 0.1));
+	float landscape_height = FMath::PerlinNoise2D(FVector2D(x * NoiseScale, y * NoiseScale));
+
+    double dx = static_cast<double>(x);
+    double dy = static_cast<double>(y);
+	double magnitude = std::sqrt(dx * dx + dy * dy);
+	double angle = std::atan2(dy, dx);
+
+	float River_noise = FMath::PerlinNoise2D(FVector2D(magnitude * NoiseScale, magnitude * angle * NoiseScale * 0.01));
+	float Mountain_noise = FMath::PerlinNoise2D(FVector2D(x * NoiseScale * 0.25, y * NoiseScale * 0.25));
+	
+	float Z = landscape_height * ZMultiplier;
+	//Z += FMath::PerlinNoise2D(FVector2D(x * NoiseScale * 3 + 0.1, y * NoiseScale * 3 + 0.1)) * ZMultiplier * 0.2;
+	if(Mountain_noise > Mountain_Thresh)
 	{
-		Z += Mountain_variable * ZMultiplier * 30 * (Mountain_variable - Mountain_Thresh);
+		Z += Mountain_noise * ZMultiplier * 300 * (Mountain_noise - Mountain_Thresh) * (Mountain_noise - Mountain_Thresh);
+		Z += rocky_noise * ZMultiplier * 6 * FMath::Clamp((Mountain_noise - Mountain_Thresh - 0.1), 0.0f, 0.2f);
 	}
+
+	else if(River_noise < River_Thresh)
+	{
+		Z += River_noise * ZMultiplier * 20 * (River_Thresh - River_noise);
+	}
+
+
 
     return Z;
 }
