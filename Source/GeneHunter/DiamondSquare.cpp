@@ -1,6 +1,7 @@
-
-
+#include <utility>
 #include "DiamondSquare.h"
+#include "Engine/StaticMeshActor.h"
+#include "Components/StaticMeshComponent.h"
 #include "ProceduralMeshComponent.h"
 #include "KismetProceduralMeshLibrary.h"
 
@@ -16,6 +17,14 @@ ADiamondSquare::ADiamondSquare()
 void ADiamondSquare::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
+	for (AStaticMeshActor* Actor : SpawnedMeshActors)
+    {
+        if (Actor && IsValid(Actor))
+        {
+            Actor->Destroy();
+        }
+    }
+    SpawnedMeshActors.Empty();
 
 	Vertices.Reset();
 	Triangles.Reset();
@@ -45,7 +54,7 @@ void ADiamondSquare::Tick(float DeltaTime)
 
 }
 
-float ADiamondSquare::get_height(int x, int y)
+std::pair<float, int> ADiamondSquare::get_height(float x, float y)
 {
 	float rocky_noise = FMath::PerlinNoise2D(FVector2D(x * NoiseScale * 10 + seed, y * NoiseScale * 10 + seed));
 	float field_noise = FMath::PerlinNoise2D(FVector2D(x * NoiseScale * 3 + seed, y * NoiseScale * 3 + seed));
@@ -60,21 +69,41 @@ float ADiamondSquare::get_height(int x, int y)
 	float Mountain_noise = FMath::PerlinNoise2D(FVector2D(x * NoiseScale * 0.25 + seed, y * NoiseScale * 0.25 + seed));
 	
 	float Z = landscape_height * ZMultiplier;
-	//Z += FMath::PerlinNoise2D(FVector2D(x * NoiseScale * 3 + 0.1, y * NoiseScale * 3 + 0.1)) * ZMultiplier * 0.2;
+	int region_value = 0;
 	if(Mountain_noise > Mountain_Thresh)
 	{
 		Z += Mountain_noise * Mountain_noise * (Mountain_noise - Mountain_Thresh) * ZMultiplier * 110;
 		Z += rocky_noise * ZMultiplier * 6 * FMath::Clamp((Mountain_noise - Mountain_Thresh), 0.0f, 0.2f);
+		region_value += 1;
 	}
 
 	else if(River_noise < River_Thresh)
 	{
 		Z += River_noise * ZMultiplier * 20 * (River_Thresh - River_noise);
+		region_value += 2;
 	}
 
+    return std::make_pair(Z, region_value);
+}
 
+void ADiamondSquare::attach_asset(FString asset_path, FVector SpawnVector)
+{
+	FRotator SpawnRotation(0.f,FMath::FRandRange(0.0f, 360.0f), 0.f);
+	UStaticMesh* MeshAsset = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *asset_path));
+	if (MeshAsset)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
 
-    return Z;
+		AStaticMeshActor* MeshActor = GetWorld()->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), SpawnVector, SpawnRotation, SpawnParams);
+		if (MeshActor)
+		{
+			// 스폰된 액터의 Static Mesh를 설정합니다.
+			MeshActor->GetStaticMeshComponent()->SetStaticMesh(MeshAsset);
+			SpawnedMeshActors.Add(MeshActor);
+		}
+	}	
 }
 
 void ADiamondSquare::CreateVertices()
@@ -83,12 +112,15 @@ void ADiamondSquare::CreateVertices()
 	{
 		for( int Y = 0; Y <= YSize; Y++)
 		{
-
-			Vertices.Add(FVector(X * Scale - (XSize * Scale * 0.5), Y * Scale - (YSize * Scale * 0.5), get_height(X,Y)));
+			auto result = get_height(X, Y);
+			float height = result.first;
+			int region_value = result.second;
+			Vertices.Add(FVector(X * Scale - (XSize * Scale * 0.5), Y * Scale - (YSize * Scale * 0.5), height));
+			if(region_value == 0)
+			{
+				attach_asset(TEXT("/Script/Engine.StaticMesh'/Game/Megascans/3D_Plants/Bigleaf_Hydrangea_vgztealha/S_Bigleaf_Hydrangea_vgztealha_Var13_lod1.S_Bigleaf_Hydrangea_vgztealha_Var13_lod1'"),FVector (X * Scale - (XSize * Scale * 0.5), Y * Scale - (YSize * Scale * 0.5), height));
+			}
 			UV0.Add(FVector2D(X * UVScale, Y * UVScale));
-
-			//DrawDebugSphere(GetWorld(), FVector( X * Scale, Y * Scale, 0), 25.0f, 16, FColor::Red, true, -1.0f, 0u, 0.0f);
-
 		}
 	}
 }
