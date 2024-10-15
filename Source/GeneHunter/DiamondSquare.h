@@ -17,6 +17,8 @@ class GENEHUNTER_API ADiamondSquare : public AActor
 public:	
 	ADiamondSquare();
 
+	UPROPERTY(EditAnywhere)
+	int seed = 0;
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = 0))
 	int XSize = 0;
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = 0))
