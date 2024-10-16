@@ -8,7 +8,8 @@
 
 
 class UMaterialInterface;
-class AStaticMeshActor;
+class UPAGComponent;
+
 UCLASS()
 class GENEHUNTER_API ADiamondSquare : public AActor
 {
@@ -17,8 +18,14 @@ class GENEHUNTER_API ADiamondSquare : public AActor
 public:	
 	ADiamondSquare();
 
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void OnConstruction(const FTransform& Transform) override;
+
 	UPROPERTY(EditAnywhere)
 	int seed = 60;
+
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = 0))
 	int XSize = 150;
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = 0))
@@ -38,29 +45,29 @@ public:
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = 0.000001))
 	float UVScale = 0.2;
 
-
-protected:
-	virtual void BeginPlay() override;
-	virtual void OnConstruction(const FTransform& Transform) override;
-
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* Material;
-
+	UPROPERTY(EditAnywhere)
+	UPAGComponent* PAGComp;
+	
 public:	
 	virtual void Tick(float DeltaTime) override;
-
+	int GetXSize() const { return XSize; }
+	int GetYSize() const { return YSize; }
+	int GetScale() const { return Scale; }
+	std::pair<float, int> get_height(float x, float y);
+	
 private:
 	UProceduralMeshComponent* ProceduralMesh;
+
 	TArray<FVector> Vertices;
 	TArray<int> Triangles;
 	TArray<FVector2D> UV0;
 	TArray<FVector> Normals;
 	TArray<struct FProcMeshTangent> Tangents;
-	TArray<AStaticMeshActor*> SpawnedMeshActors;
 
 	void CreateVertices();
 	void CreateTriangles();
-	std::pair<float, int> get_height(float x, float y);
-	void attach_asset(FString asset_path, FVector SpawnVector);
+
 
 };
