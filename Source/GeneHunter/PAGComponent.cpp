@@ -88,10 +88,9 @@ TArray<float> UPAGComponent::ApplySoftmax()
 }
 
 
-void UPAGComponent::AttachAsset(UStaticMesh* MeshAsset, FVector SpawnVector)
+void UPAGComponent::AttachAsset(UStaticMesh* MeshAsset, FVector SpawnVector, FRotator SpawnRotation)
 {
-	FRotator SpawnRotation(0.f,FMath::FRandRange(0.0f, 360.0f), 0.f);
-	//UStaticMesh* MeshAsset = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *asset_path));
+	//FRotator SpawnRotation(0.f,FMath::FRandRange(0.0f, 360.0f), 0.f);
 	if (MeshAsset)
 	{
 		FActorSpawnParameters SpawnParams;
@@ -128,12 +127,12 @@ void UPAGComponent::OrganizeAsset()
 	if(Assets.Num()>0)
 	{
 		TArray<float> Softmax_Frequency = ApplySoftmax();
-		float OriginXScale = DiamondSquare->GetXSize() * DiamondSquare->GetScale();
-		float OriginYScale = DiamondSquare->GetYSize() * DiamondSquare->GetScale();
+		float Scale = DiamondSquare->GetScale();
+		float OriginXScale = DiamondSquare->GetXSize() * Scale;
+		float OriginYScale = DiamondSquare->GetYSize() * Scale;
 		float XSize = DiamondSquare->GetXSize() / AssetDistance;
 		float YSize = DiamondSquare->GetYSize() / AssetDistance;
-		float NewXScale = OriginXScale / XSize;
-		float NewYScale = OriginYScale / YSize;
+		float NewScale = Scale * AssetDistance;
 		for( float X = 0.5; X < XSize; X++)
 		{
 			for( float Y = 0.5; Y < YSize; Y++)
@@ -145,18 +144,20 @@ void UPAGComponent::OrganizeAsset()
 					float NearX = FMath::FloorToInt(TempX * AssetDistance);
 					float NearY = FMath::FloorToInt(TempY * AssetDistance);
 					FVector Normal =  FVector::CrossProduct(
-						FVector(NearX+1, NearY,  DiamondSquare->get_height(NearX+1, NearY).first) - FVector(NearX, NearY,  DiamondSquare->get_height(NearX, NearY).first),
-						FVector(NearX, NearY+1,  DiamondSquare->get_height(NearX, NearY+1).first) - FVector(NearX, NearY,  DiamondSquare->get_height(NearX, NearY).first)
+						FVector((NearX+1)*Scale, NearY*Scale,  DiamondSquare->get_height(NearX+1, NearY).first) - FVector(NearX*Scale, NearY*Scale,  DiamondSquare->get_height(NearX, NearY).first),
+						FVector(NearX*Scale, (NearY+1)*Scale,  DiamondSquare->get_height(NearX, NearY+1).first) - FVector(NearX*Scale, NearY*Scale,  DiamondSquare->get_height(NearX, NearY).first)
 						);
 					auto result = DiamondSquare->get_height(TempX * AssetDistance, TempY * AssetDistance);
 					float height = result.first;
 					int region_value = result.second;
 					int index = SelectIndexBasedOnProbability(Softmax_Frequency);
-					FVector StartPoint = FVector(TempX * NewXScale - (OriginXScale * 0.5), TempY * NewYScale - (OriginYScale * 0.5), height);
-					DrawDebugDirectionalArrow(GetWorld(), StartPoint, StartPoint+Normal, 100.0f, FColor::Green, false, 10.0f, 0, 5.0f);
-					if(Assets[index].Region == region_value)
+					if(0 == region_value)
 					{
-						AttachAsset(Assets[index].Mesh, FVector(TempX * NewXScale - (OriginXScale * 0.5), TempY * NewYScale - (OriginYScale * 0.5), height));
+						AttachAsset(
+							Assets[index].Mesh, 
+							FVector(TempX * NewScale - (OriginXScale * 0.5), TempY * NewScale - (OriginYScale * 0.5), height) + Assets[index].Depth * Normal.GetSafeNormal(),
+							FRotationMatrix::MakeFromZ(Normal).Rotator() + Assets[index].Rotation
+						);
 					}
 				}
 			}

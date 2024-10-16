@@ -38,7 +38,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	void AttachAsset(UStaticMesh* MeshAsset, FVector SpawnVector);
+	void AttachAsset(UStaticMesh* MeshAsset, FVector SpawnVector, FRotator SpawnRotation);
 	void RemoveAsset();
 	void OrganizeAsset();
 

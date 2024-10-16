@@ -17,18 +17,20 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "informations")
     UStaticMesh* Mesh;
 
-    // 해당 Mesh의 region을 나타내는 변수
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "informations")
-    int32 Region;
-
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "informations")
     float Frequency;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "informations")
-    FString Category;
+    float Depth;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "informations")
+    FRotator Rotation;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "informations")
+    float Size;
 
     // 기본 생성자
     FActorGenerationStructure()
-        : Mesh(nullptr), Region(0), Frequency(0.0f), Category(TEXT("None"))
+        : Mesh(nullptr), Frequency(0.0f), Depth(0.0f), Rotation(0.0f,0.0f,0.0f) , Size(1.0f)
     {}
 };

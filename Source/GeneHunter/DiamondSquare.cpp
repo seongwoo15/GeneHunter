@@ -72,7 +72,7 @@ std::pair<float, int> ADiamondSquare::get_height(float x, float y)
 	{
 		float rocky_noise = FMath::PerlinNoise2D(FVector2D(x * NoiseScale * 10 + seed, y * NoiseScale * 10 + seed));
 		Z += Mountain_noise * Mountain_noise * (Mountain_noise - Mountain_Thresh) * ZMultiplier * 110;
-		Z += rocky_noise * ZMultiplier * 6 * FMath::Clamp((Mountain_noise - Mountain_Thresh), 0.0f, 0.2f);
+		Z += rocky_noise * ZMultiplier * 3 * FMath::Clamp((Mountain_noise - Mountain_Thresh), 0.0f, 0.2f);
 		region_value += 1;
 	}
 
