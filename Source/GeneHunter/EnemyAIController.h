@@ -6,6 +6,8 @@
 #include "AIController.h"
 #include "EnemyAIController.generated.h"
 
+class UBehaviorTree;
+
 /**
  * 
  */
@@ -16,6 +18,14 @@ class GENEHUNTER_API AEnemyAIController : public AAIController
 
 protected:
 	// Called when the game starts or when spawned
-	//virtual void BeginPlay() override;
+	virtual void BeginPlay() override;
+
+private:
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	UBehaviorTree* AIBehavior;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 };
