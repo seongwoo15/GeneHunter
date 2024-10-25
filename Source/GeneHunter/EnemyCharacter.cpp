@@ -30,7 +30,7 @@ AEnemyCharacter::AEnemyCharacter()
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	bIsAttacking = false;
 }
 
 // Called every frame
@@ -47,3 +47,41 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 }
 
+void AEnemyCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+    if (Montage == AttackMontage)
+    {
+        bIsAttacking = false;
+        OnAttackEnded.Broadcast();
+    }
+}
+
+
+void AEnemyCharacter::MeleeAttack()
+{
+	if (bIsAttacking)
+    {
+        return;
+    }
+
+    if (AttackMontage)
+    {
+        // Get the character's animation instance
+        UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+        if (AnimInstance)
+        {
+            // Play the attack montage
+            float MontageDuration = AnimInstance->Montage_Play(AttackMontage, 1.0f);
+            if (MontageDuration > 0.f)
+            {
+                // Set attacking flag to true
+                bIsAttacking = true;
+
+                // Bind function to Montage ended event
+                FOnMontageEnded MontageEndedDelegate;
+                MontageEndedDelegate.BindUObject(this, &AEnemyCharacter::OnAttackMontageEnded);
+                AnimInstance->Montage_SetEndDelegate(MontageEndedDelegate, AttackMontage);
+            }
+        }
+    }
+}
