@@ -47,7 +47,6 @@ void UBTTask_Attack::OnAttackEnded()
     if (CachedOwnerComp)
     {
         // Task 완료
-        UE_LOG(LogTemp, Warning, TEXT("MyFloat 값: %f"), 0.1f);
         FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
     }
 }
