@@ -146,16 +146,16 @@ void UPAGComponent::OrganizeAsset()
 						FVector((NearX+1)*Scale, NearY*Scale,  DiamondSquare->get_height(NearX+1, NearY).first) - FVector(NearX*Scale, NearY*Scale,  DiamondSquare->get_height(NearX, NearY).first),
 						FVector(NearX*Scale, (NearY+1)*Scale,  DiamondSquare->get_height(NearX, NearY+1).first) - FVector(NearX*Scale, NearY*Scale,  DiamondSquare->get_height(NearX, NearY).first)
 						);
-					auto result = DiamondSquare->get_height(TempX * AssetDistance, TempY * AssetDistance);
-					float height = result.first;
-					int region_value = result.second;
-					int index = SelectIndexBasedOnProbability(Softmax_Frequency);
-					if(0 == region_value)
+					std::pair<float, int> heightResult = DiamondSquare->get_height(TempX * AssetDistance, TempY * AssetDistance);
+					float Height = heightResult.first;
+					int RegionValue = heightResult.second;
+					int Index = SelectIndexBasedOnProbability(Softmax_Frequency);
+					if(0 == RegionValue)
 					{
 						AttachAsset(
-							Assets[index].Mesh, 
-							FVector(TempX * NewScale - (OriginXScale * 0.5), TempY * NewScale - (OriginYScale * 0.5), height) + Assets[index].Depth * Normal.GetSafeNormal(),
-							FRotationMatrix::MakeFromZ(Normal).Rotator() + Assets[index].Rotation
+							Assets[Index].Mesh, 
+							FVector(TempX * NewScale - (OriginXScale * 0.5), TempY * NewScale - (OriginYScale * 0.5), Height) + Assets[Index].Depth * Normal.GetSafeNormal(),
+							FRotationMatrix::MakeFromZ(Normal).Rotator() + Assets[Index].Rotation
 						);
 					}
 				}
