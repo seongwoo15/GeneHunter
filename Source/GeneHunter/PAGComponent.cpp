@@ -16,11 +16,6 @@ UPAGComponent::UPAGComponent()
 	if (Owner)
 	{
 		DiamondSquare = Cast<ADiamondSquare>(Owner);
-		if (DiamondSquare)
-		{
-			// 원하는 함수 호출
-			//DiamondSquare->MyFunction();
-		}
 	}
 }
 
@@ -39,6 +34,7 @@ void UPAGComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
+//매쉬들을 새로 스폰할 때 이전것들을 삭제하는 함수
 void UPAGComponent::RemoveAsset()
 {
 	for (AStaticMeshActor* Actor : SpawnedMeshActors)
@@ -51,6 +47,7 @@ void UPAGComponent::RemoveAsset()
     SpawnedMeshActors.Empty();
 }
 
+//매쉬들간의 빈도를 Softmax로 계산
 TArray<float> UPAGComponent::ApplySoftmax()
 {
     TArray<float> Softmax_Frequency;
@@ -87,7 +84,7 @@ TArray<float> UPAGComponent::ApplySoftmax()
     return Softmax_Frequency;
 }
 
-
+//매쉬를 땅에 스폰하는 함수
 void UPAGComponent::AttachAsset(UStaticMesh* MeshAsset, FVector SpawnVector, FRotator SpawnRotation)
 {
 	//FRotator SpawnRotation(0.f,FMath::FRandRange(0.0f, 360.0f), 0.f);
@@ -107,6 +104,7 @@ void UPAGComponent::AttachAsset(UStaticMesh* MeshAsset, FVector SpawnVector, FRo
 	}	
 }
 
+//Softmax 결과에 따라 스폰할 매쉬 종류를 결정하는 함수
 int UPAGComponent::SelectIndexBasedOnProbability(TArray<float>& ProbabilityDistribution)
 {
 	float RandomNumber = FMath::FRand();
@@ -122,6 +120,7 @@ int UPAGComponent::SelectIndexBasedOnProbability(TArray<float>& ProbabilityDistr
 	return 0;
 }
 
+//에셋들을 붙일 위치나 회전등을 결정하는 함수
 void UPAGComponent::OrganizeAsset()
 {
 	if(Assets.Num()>0)

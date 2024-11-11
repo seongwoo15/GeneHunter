@@ -4,12 +4,42 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "ActorGenerationStructure.h"
+#include "Engine/StaticMesh.h"
 #include "PAGComponent.generated.h"
 
-class UStaticMesh;
 class AStaticMeshActor;
 class ADiamondSquare;
+
+USTRUCT(BlueprintType)
+struct FActorGenerationStructure
+{
+    GENERATED_BODY()
+
+public:
+	//붙일 스테틱 매쉬
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Informations")
+    UStaticMesh* Mesh;
+
+	//스테틱 매쉬의 빈도를 나타냄, Softmax값 거치기때문에 아무 실수나 넣어도 됨
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Informations")
+    float Frequency;
+
+	//매쉬가 땅에 박히는 깊이
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Informations")
+    float Depth;
+
+	//매쉬의 기본 회전자
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Informations")
+    FRotator Rotation;
+
+	//매쉬의 크기
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Informations")
+    float Size;
+
+    FActorGenerationStructure()
+        : Mesh(nullptr), Frequency(0.0f), Depth(0.0f), Rotation(0.0f, 0.0f, 0.0f), Size(1.0f)
+    {}
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GENEHUNTER_API UPAGComponent : public UActorComponent
@@ -24,10 +54,9 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-    // 페어링된 Mesh와 Region을 저장하는 배열
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Paired Mesh Regions")
+    // 구조체 형식으로 스폰할 매쉬 정의
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorGenerationStructure")
     TArray<FActorGenerationStructure> Assets;
-	TArray<float> ApplySoftmax();
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = 0, ClampMax = 1), Category = "Params")
 	float Frequency_Thresh = 1.0f;
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = 0), Category = "Params")
@@ -41,6 +70,7 @@ public:
 	void AttachAsset(UStaticMesh* MeshAsset, FVector SpawnVector, FRotator SpawnRotation);
 	void RemoveAsset();
 	void OrganizeAsset();
+	TArray<float> ApplySoftmax();
 
 private:
 	ADiamondSquare* DiamondSquare;
