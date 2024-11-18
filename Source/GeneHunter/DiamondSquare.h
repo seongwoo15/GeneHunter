@@ -1,3 +1,4 @@
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -10,6 +11,7 @@
 class UMaterialInterface;
 class UPAGComponent;
 
+//Generate procedural landscape mesh 
 UCLASS()
 class GENEHUNTER_API ADiamondSquare : public AActor
 {

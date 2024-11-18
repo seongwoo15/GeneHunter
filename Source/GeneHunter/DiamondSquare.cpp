@@ -1,3 +1,5 @@
+// Copyright Epic Games, Inc. All Rights Reserved.
+
 #include "DiamondSquare.h"
 #include "PAGComponent.h"
 #include <utility>
@@ -30,7 +32,7 @@ void ADiamondSquare::OnConstruction(const FTransform& Transform)
 		PAGComp->RemoveAsset();
 		PAGComp->OrganizeAsset();
 	}
-
+	//Calculate shadow angle
 	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UV0, Normals, Tangents);
 
 
@@ -52,7 +54,8 @@ void ADiamondSquare::Tick(float DeltaTime)
 
 }
 
-//지형을 랜덤하게 생성하는 함수로 높이를 float으로 반환하고 지역에 대한 정보를 int형태로 반환
+//Generate Random height to build landsccape
+//return height as float and region information as int, mountain:1, river:2, else: 0
 std::pair<float, int> ADiamondSquare::get_height(float x, float y)
 {
 	
@@ -86,7 +89,7 @@ std::pair<float, int> ADiamondSquare::get_height(float x, float y)
     return std::make_pair(Z, region_value);
 }
 
-//지형 생성하는 함수
+//generate landscape
 void ADiamondSquare::CreateVertices()
 {
 	for( int X = 0; X <= XSize; X++)
@@ -102,7 +105,7 @@ void ADiamondSquare::CreateVertices()
 	}
 }
 
-//사각형 땅 한개를 만드는 함수
+//Generate one square mesh
 void ADiamondSquare::CreateTriangles()
 {
 	int Vertex = 0;

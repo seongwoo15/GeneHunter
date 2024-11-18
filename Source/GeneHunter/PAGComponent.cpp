@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Engine/StaticMeshActor.h"
 #include "Components/StaticMeshComponent.h"
@@ -34,7 +34,7 @@ void UPAGComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-//매쉬들을 새로 스폰할 때 이전것들을 삭제하는 함수
+//Delete prior meshes before generating new one
 void UPAGComponent::RemoveAsset()
 {
 	for (AStaticMeshActor* Actor : SpawnedMeshActors)
@@ -47,7 +47,7 @@ void UPAGComponent::RemoveAsset()
     SpawnedMeshActors.Empty();
 }
 
-//매쉬들간의 빈도를 Softmax로 계산
+//calculate mesh frequency with softmax function
 TArray<float> UPAGComponent::ApplySoftmax()
 {
     TArray<float> Softmax_Frequency;

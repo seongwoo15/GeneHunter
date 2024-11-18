@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 
 #include "BTTask_Attack.h"
@@ -40,13 +40,13 @@ void UBTTask_Attack::OnAttackEnded()
 {
     if (EnemyCharacter)
     {
-        // 델리게이트 바인딩 해제
+        // remove binding
         EnemyCharacter->OnAttackEnded.RemoveDynamic(this, &UBTTask_Attack::OnAttackEnded);
     }
 
     if (CachedOwnerComp)
     {
-        // Task 완료
+        // Task complete
         FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
     }
 }

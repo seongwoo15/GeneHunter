@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -9,6 +9,7 @@
 /**
  * 
  */
+//Clear selected Blackboard value
 UCLASS()
 class GENEHUNTER_API UBTTask_ClearBlackboardValue : public UBTTask_BlackboardBase
 {

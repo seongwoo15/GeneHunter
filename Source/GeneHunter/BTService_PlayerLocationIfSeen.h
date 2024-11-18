@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -9,6 +9,7 @@
 /**
  * 
  */
+//Service which updates PlayerLocation if seen 
 UCLASS()
 class GENEHUNTER_API UBTService_PlayerLocationIfSeen : public UBTService_BlackboardBase
 {
