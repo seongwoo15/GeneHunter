@@ -84,7 +84,7 @@ TArray<float> UPAGComponent::ApplySoftmax()
     return Softmax_Frequency;
 }
 
-//매쉬를 땅에 스폰하는 함수
+//spawn meshe to specific point
 void UPAGComponent::AttachAsset(UStaticMesh* MeshAsset, FVector SpawnVector, FRotator SpawnRotation)
 {
 	//FRotator SpawnRotation(0.f,FMath::FRandRange(0.0f, 360.0f), 0.f);
@@ -97,14 +97,14 @@ void UPAGComponent::AttachAsset(UStaticMesh* MeshAsset, FVector SpawnVector, FRo
 		AStaticMeshActor* MeshActor = GetWorld()->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), SpawnVector, SpawnRotation, SpawnParams);
 		if (MeshActor)
 		{
-			// 스폰된 액터의 Static Mesh를 설정합니다.
+			// Attach mesh to generated actor
 			MeshActor->GetStaticMeshComponent()->SetStaticMesh(MeshAsset);
 			SpawnedMeshActors.Add(MeshActor);
 		}
 	}	
 }
 
-//Softmax 결과에 따라 스폰할 매쉬 종류를 결정하는 함수
+//Select which mesh to generate by softmax result
 int UPAGComponent::SelectIndexBasedOnProbability(TArray<float>& ProbabilityDistribution)
 {
 	float RandomNumber = FMath::FRand();
@@ -120,7 +120,7 @@ int UPAGComponent::SelectIndexBasedOnProbability(TArray<float>& ProbabilityDistr
 	return 0;
 }
 
-//에셋들을 붙일 위치나 회전등을 결정하는 함수
+//Calculate mesh Rotation and Location, apply mesh attachment
 void UPAGComponent::OrganizeAsset()
 {
 	if(Assets.Num()>0)

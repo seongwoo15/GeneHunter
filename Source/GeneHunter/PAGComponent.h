@@ -10,29 +10,30 @@
 class AStaticMeshActor;
 class ADiamondSquare;
 
+//Structure which saves informations for mesh
 USTRUCT(BlueprintType)
 struct FActorGenerationStructure
 {
     GENERATED_BODY()
 
 public:
-	//붙일 스테틱 매쉬
+	//Static mesh to be attached
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Informations")
     UStaticMesh* Mesh;
 
-	//스테틱 매쉬의 빈도를 나타냄, Softmax값 거치기때문에 아무 실수나 넣어도 됨
+	//Frequency of meshes, any float can be the input value
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Informations")
     float Frequency;
 
-	//매쉬가 땅에 박히는 깊이
+	//Depth of Mesh
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Informations")
     float Depth;
 
-	//매쉬의 기본 회전자
+	//base rotator of mesh
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Informations")
     FRotator Rotation;
 
-	//매쉬의 크기
+	//size of mesh
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Informations")
     float Size;
 
@@ -54,7 +55,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-    // 구조체 형식으로 스폰할 매쉬 정의
+    // Define mesh as Structure 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorGenerationStructure")
     TArray<FActorGenerationStructure> Assets;
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = 0, ClampMax = 1), Category = "Params")
